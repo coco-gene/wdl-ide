@@ -18,7 +18,7 @@ services:
     - ./cromwell/cromwell.conf:/etc/cromwell/cromwell.conf:ro
     - ./docker/${GOOGLE_APPLICATION_CREDENTIALS:-google-nocred}:/root/key.json:ro
     - ./docker/executions:/executions
-    # - ./docker/docker-bin:/usr/local/bin:ro
+    - docker-bin:/usr/local/bin:ro
     depends_on:
     - db
     - docker
@@ -31,8 +31,8 @@ services:
     image: docker:dind
     privileged: true
     volumes:
-      # - ./docker/docker-bin:/usr/local/bin
-      # - ./docker/docker-run:/var/lib/docker
+      - docker-bin:/usr/local/bin
+      - docker-run:/var/lib/docker
       - ./docker/executions:/executions
   theia:
     image: quay.io/broadinstitute/wdl-ide-theia
@@ -46,3 +46,10 @@ services:
     depends_on:
     - cromwell
     - docker
+volumes:
+  #db:
+  docker-bin:
+  docker-run:
+  #executions:
+  #google-nocred:
+  #home:
