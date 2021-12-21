@@ -16,9 +16,9 @@ services:
     - MYSQL_HOST=db
     volumes:
     - ./cromwell/cromwell.conf:/etc/cromwell/cromwell.conf:ro
-    - ${GOOGLE_APPLICATION_CREDENTIALS:-google-nocred}:/root/key.json:ro
-    - executions:/executions
-    - docker-bin:/usr/local/bin:ro
+    - ./docker/${GOOGLE_APPLICATION_CREDENTIALS:-google-nocred}:/root/key.json:ro
+    - ./docker/executions:/executions
+    - ./docker/docker-bin:/usr/local/bin:ro
     depends_on:
     - db
     - docker
@@ -26,14 +26,14 @@ services:
     image: mysql
     env_file: ./cromwell/mysql.env
     volumes:
-    - db:/var/lib/mysql
+    - ./docker/db:/var/lib/mysql
   docker:
     image: docker:dind
     privileged: true
     volumes:
-    - docker-bin:/usr/local/bin
-    - docker-run:/var/lib/docker
-    - executions:/executions
+    - ./docker/docker-bin:/usr/local/bin
+    - ./docker/docker-run:/var/lib/docker
+    - ./docker/executions:/executions
   theia:
     image: quay.io/broadinstitute/wdl-ide-theia
     ports:
@@ -41,15 +41,8 @@ services:
     environment:
     - DOCKER_HOST=tcp://docker:2375
     volumes:
-    - executions:/executions
-    - home:/home/theia
+    - ./docker/executions:/executions
+    - ./docker/home:/home/theia
     depends_on:
     - cromwell
     - docker
-volumes:
-  db:
-  docker-bin:
-  docker-run:
-  executions:
-  google-nocred:
-  home:
